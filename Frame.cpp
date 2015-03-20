@@ -1,50 +1,62 @@
 #include "StdAfx.h"
 #include "Frame.h"
 
-void Frame::parse(const data_t & data)
+Frame Frame::decode(const data_t & data)
 {
-	fin = (data[0] & (1<<7)) != 0;
+	Frame frame;
 
-	rsv[0] = (data[0] & (1<<6)) != 0;
-	rsv[1] = (data[0] & (1<<5)) != 0;
-	rsv[2] = (data[0] & (1<<4)) != 0;
+	frame.fin = (data[0] & (1<<7)) != 0;
 
-	opcode = data[0] & 0x0f;
-	mask = (data[1] & (1<<7)) != 0;
+	frame.rsv[0] = (data[0] & (1<<6)) != 0;
+	frame.rsv[1] = (data[0] & (1<<5)) != 0;
+	frame.rsv[2] = (data[0] & (1<<4)) != 0;
 
-	bodyLength = data[1] & 0x7f;
+	frame.opcode = data[0] & 0x0f;
+	frame.mask = (data[1] & (1<<7)) != 0;
+
+	frame.bodyLength = data[1] & 0x7f;
 
 	size_t shift = 2;
 
-	if(bodyLength == 126)
+	if(frame.bodyLength == 126)
 	{
-		bodyLength = *(unsigned __int16*)&data[2];
+		frame.bodyLength = *(unsigned __int16*)&data[2];
 		shift += 2;
 	}
-	else if(bodyLength == 127)
+	else if(frame.bodyLength == 127)
 	{
-		bodyLength = *(unsigned __int64*)&data[2];
+		frame.bodyLength = *(unsigned __int64*)&data[2];
 		shift += 8;
 	}
 
-	if(mask)
+	if(frame.mask)
 	{
-		maskKey = *(__int32*)&data[shift];
+		frame.maskKey = *(__int32*)&data[shift];
 		shift += 4;
 	}
 
 	auto begin = data.cbegin() + shift;
-	body = data_t(begin, begin + bodyLength);
+	frame.body = data_t(begin, begin + frame.bodyLength);
 
-	if(mask)
+	if(frame.mask)
 	{
-		const unsigned char * maskPtr = (unsigned char *)&maskKey;
-		for(size_t i = 0; i < body.size(); i++)
-			body[i] ^= maskPtr[i % 4];
+		const unsigned char * maskPtr = (unsigned char *)&(frame.maskKey);
+		for(size_t i = 0; i < frame.body.size(); i++)
+			frame.body[i] ^= maskPtr[i % 4];
 	}
+
+	return frame;
 }
 
-Frame::data_t Frame::packet() const
+Frame Frame::createTextFrame(const std::string & msg)
+{
+	Frame frame;
+	frame.opcode = 0x1;
+	frame.setBody(msg);
+	return frame;
+}
+
+Frame::data_t Frame::getRaw() const
 {
 
 	data_t result(2);

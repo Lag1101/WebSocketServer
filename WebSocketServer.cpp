@@ -107,13 +107,12 @@ public:
 
 	void parseFrame(const std::vector<unsigned char> & data)
 	{
-		Frame frame;
-		frame.parse(data);
+		Frame frame = Frame::decode(data);
+
 		std::cout << "Received :" << frame << std::endl;
 
-		Frame ansFrame;
-		ansFrame.setBody(std::string("Hello from server with Love"));
-		auto ans = ansFrame.packet();
+		Frame ansFrame = Frame::createTextFrame("Hello from server with Love");
+		auto ans = ansFrame.getRaw();
 		boost::asio::async_write(socket_,
 			boost::asio::buffer(&ans[0], ans.size()),
 			boost::bind(&Session::handle_write, this,

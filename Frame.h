@@ -8,8 +8,9 @@ class Frame
 public:
 	typedef std::vector<unsigned char> data_t;
 
-	void parse(const data_t & data);
-	data_t packet() const;
+	static Frame decode(const data_t & data);
+	static Frame createTextFrame(const std::string & msg);
+	data_t getRaw() const;
 
 
 	inline bool							getFin() const			{return fin;}
@@ -20,6 +21,12 @@ public:
 	inline unsigned __int32				getMaskKey() const		{return maskKey;}
 	inline const data_t &				getBody() const			{return body;}
 
+	friend std::ostream & operator << (std::ostream & out, const Frame & frame);
+
+
+private:
+	Frame() : fin(true), opcode(1), mask(false), bodyLength(0), maskKey(0) {}
+
 	template<class T>
 	inline void setBody(const T & data)
 	{
@@ -27,13 +34,6 @@ public:
 		body.assign(data.cbegin(), data.cend());
 		setBodyLength(body.size());
 	}
-
-	friend std::ostream & operator << (std::ostream & out, const Frame & frame);
-
-	Frame() : fin(true), opcode(1), mask(false), bodyLength(0), maskKey(0) {};
-
-private:
-
 	inline void setBodyLength(unsigned __int64 bodyLength) {this->bodyLength = bodyLength;}
 
 
