@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="http://code.jquery.com/jquery-1.8.3.js"></script>
+</head>
+<body>
+    <h1 id="status"></h1>
+    <ul id="history"></ul>
+    <button id="send">Send</button>
+    <script>
+        var socket = new WebSocket("ws://127.0.0.1:3001");
+
+        socket.onopen = function() {
+            var status = $("#status");
+            var history = $("#history");
+
+            status.text("Socket is connected");
+
+            $('#send').click(function(){
+                socket.send("hi");
+            });
+
+            socket.onmessage = function(msg) {
+                history.append(
+                        $('<li></li>').text(msg.data)
+                );
+            };
+            socket.onerror = function(err) {
+                status.text("ERROR: " + err.data);
+            };
+        };
+
+    </script>
+</body>
+</html>

@@ -1,5 +1,6 @@
-#include "StdAfx.h"
 #include "Frame.h"
+
+#include <iostream>
 
 Frame Frame::decode(const data_t & data)
 {
@@ -20,18 +21,18 @@ Frame Frame::decode(const data_t & data)
 
 	if(frame.bodyLength == 126)
 	{
-		frame.bodyLength = *(unsigned __int16*)&data[2];
+		frame.bodyLength = *(unsigned short*)&data[2];
 		shift += 2;
 	}
 	else if(frame.bodyLength == 127)
 	{
-		frame.bodyLength = *(unsigned __int64*)&data[2];
+		frame.bodyLength = *(unsigned short*)&data[2];
 		shift += 8;
 	}
 
 	if(frame.mask)
 	{
-		frame.maskKey = *(__int32*)&data[shift];
+		frame.maskKey = *(unsigned int*)&data[shift];
 		shift += 4;
 	}
 
@@ -76,13 +77,13 @@ Frame::data_t Frame::getRaw() const
 		{
 			result[1] = 126;
 			result.resize(4);
-			*(unsigned __int16*)&result[2] = bodyLength;
+			*(unsigned short*)&result[2] = bodyLength;
 		} 
-		else if(bodyLength < (__int64(1)<<64))
+		else if(bodyLength < ((long long)(1)<<64))
 		{
 			result[1] = 127;
 			result.resize(10);
-			*(unsigned __int64*)&result[2] = bodyLength;
+			*(unsigned long long*)&result[2] = bodyLength;
 		}
 
 		if(mask) result[1] |= (1<<7);

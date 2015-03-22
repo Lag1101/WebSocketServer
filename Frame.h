@@ -3,6 +3,8 @@
 #include <bitset>
 #include <vector>
 
+#include <boost/asio.hpp>
+
 class Frame
 {
 public:
@@ -15,10 +17,10 @@ public:
 
 	inline bool							getFin() const			{return fin;}
 	inline std::bitset<3>				getRsv() const			{return rsv;}
-	inline unsigned __int8				getOpcode() const		{return opcode;}
+	inline unsigned char				getOpcode() const		{return opcode;}
 	inline bool							getMask() const			{return mask;}
-	inline unsigned __int64				getBodyLength() const	{return bodyLength;}
-	inline unsigned __int32				getMaskKey() const		{return maskKey;}
+	inline unsigned long long			getBodyLength() const	{return bodyLength;}
+	inline unsigned int					getMaskKey() const		{return maskKey;}
 	inline const data_t &				getBody() const			{return body;}
 
 	friend std::ostream & operator << (std::ostream & out, const Frame & frame);
@@ -34,15 +36,15 @@ private:
 		body.assign(data.cbegin(), data.cend());
 		setBodyLength(body.size());
 	}
-	inline void setBodyLength(unsigned __int64 bodyLength) {this->bodyLength = bodyLength;}
+	inline void setBodyLength(unsigned long long bodyLength) {this->bodyLength = bodyLength;}
 
 
 	bool fin;
 	std::bitset<3> rsv;
-	unsigned __int8 opcode;
+	unsigned char opcode;
 	bool mask;
-	unsigned __int64 bodyLength;
-	unsigned __int32 maskKey;
+	unsigned long long bodyLength;
+	unsigned int maskKey;
 	data_t	body;
 };
 
