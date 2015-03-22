@@ -14,5 +14,5 @@ set(SOURCE_FILES WebSocketServer.cpp Frame.cpp)
 
 
 INCLUDE_DIRECTORIES(${INCLUDE_DIRECTORIES} ${Boost_INCLUDE_DIRS})
-add_executable(${target} ${SOURCE_FILES})
+add_executable(${target} ${SOURCE_FILES} Session.cpp Session.h utils/Utils.cpp utils/Utils.h)
 target_link_libraries(${target} ${Boost_LIBRARIES})

@@ -3,7 +3,6 @@
 #include <bitset>
 #include <vector>
 
-#include <boost/asio.hpp>
 
 class Frame
 {

@@ -1,6 +1,6 @@
 #include "Frame.h"
 
-#include <iostream>
+#include <ostream>
 
 Frame Frame::decode(const data_t & data)
 {
@@ -12,10 +12,10 @@ Frame Frame::decode(const data_t & data)
 	frame.rsv[1] = (data[0] & (1<<5)) != 0;
 	frame.rsv[2] = (data[0] & (1<<4)) != 0;
 
-	frame.opcode = data[0] & 0x0f;
+	frame.opcode = (unsigned char) (data[0] & 0x0f);
 	frame.mask = (data[1] & (1<<7)) != 0;
 
-	frame.bodyLength = data[1] & 0x7f;
+	frame.bodyLength = (unsigned long long int) (data[1] & 0x7f);
 
 	size_t shift = 2;
 
@@ -71,13 +71,13 @@ Frame::data_t Frame::getRaw() const
 		if(rsv[2])	result[0] |= (1<<4);
 	}
 	{
-		result[1] = bodyLength;
+		result[1] = (unsigned char) bodyLength;
 
 		if(bodyLength >= (2<<7) && bodyLength < (2<<16))
 		{
 			result[1] = 126;
 			result.resize(4);
-			*(unsigned short*)&result[2] = bodyLength;
+			*(unsigned short*)&result[2] = (unsigned short) bodyLength;
 		} 
 		else if(bodyLength < ((long long)(1)<<64))
 		{
