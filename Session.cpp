@@ -2,8 +2,10 @@
 // Created by luckybug on 22.03.15.
 //
 
+#include <iterator>
+#include <iostream>
+
 #include <boost/bind.hpp>
-#include <glob.h>
 
 #include "Session.h"
 #include "utils/Utils.h"

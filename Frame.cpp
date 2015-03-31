@@ -1,6 +1,7 @@
 #include "Frame.h"
 
 #include <ostream>
+#include <iterator>
 
 Frame Frame::decode(const data_t & data)
 {
