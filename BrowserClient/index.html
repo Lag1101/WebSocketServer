@@ -30,6 +30,9 @@
             socket.onerror = function(err) {
                 status.text("ERROR: " + err.data);
             };
+            socket.onclose = function(err) {
+                status.text("Connection closed");
+            };
         };
 
     </script>

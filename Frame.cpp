@@ -2,7 +2,11 @@
 
 #include <ostream>
 #include <iterator>
+#include <limits>
 
+/*!
+ * 	\brief this is comment
+ */
 Frame Frame::decode(const data_t & data)
 {
 	Frame frame;
@@ -80,7 +84,7 @@ Frame::data_t Frame::getRaw() const
 			result.resize(4);
 			*(unsigned short*)&result[2] = (unsigned short) bodyLength;
 		} 
-		else if(bodyLength < ((long long)(1)<<64))
+		else if(bodyLength < (std::numeric_limits<unsigned long long>::max()))
 		{
 			result[1] = 127;
 			result.resize(10);

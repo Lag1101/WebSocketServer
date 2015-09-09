@@ -10,6 +10,8 @@
 
 #include "Session.h"
 
+#include "boost_http_server/boost_http_server_entry.hpp"
+
 using boost::asio::ip::tcp;
 
 
@@ -59,15 +61,16 @@ private:
 	std::deque<Session*> sessions;
 };
 
-int main()
+int main(int argc, char* argv[])
 {
 	try
 	{
-		boost::asio::io_service io_service;
-
-		server s(io_service, 3001);
-
-		io_service.run();
+		entry(argc, argv);
+//		boost::asio::io_service io_service;
+//
+//		server s(io_service, 3001);
+//
+//		io_service.run();
 	}
 	catch (std::exception& e)
 	{
